@@ -1,25 +1,36 @@
-name: Build Docker Image
-
-on:
-  push:
-    branches: [ main ]
+name: node app
+# Укажите сборку для запуска автоматического ci/cd push: branches: main
+on: push:
+  branches:
+    - "main"
 
 jobs:
-  build-and-push:
+  build:
+    name: Build Docker Image
+    # Укажите ОС для работы приложения
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      # Клонируйте код приложения в ОС
+      - name: Checkout
+        uses: actions/checkout@v2
 
-      - name: Login to DockerHub
-        uses: docker/login-action@v3
+      # Войдите в Docker hub используя токен
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME}
-          password: ${{secrets.DOCKERHUB_TOKEN }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+      # Создайте image build kit builder
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      # Создайте образ контейнера и отправьте его в Docker Hub с помощью тега clockbox
+      - name: Build and push
+        uses: docker/build-push-action@v2
         with:
           context: .
+          file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/vis7:latest
