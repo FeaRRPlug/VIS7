@@ -1,8 +1,9 @@
 name: node app
 # Укажите сборку для запуска автоматического ci/cd push: branches: main
-on: push:
-  branches:
-    - "main"
+on: 
+  push:
+    branches:
+      - "main"
 
 jobs:
   build:
